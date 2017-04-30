@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-var database = require('../config/database.json');
 var config = require('../config');
 
 
