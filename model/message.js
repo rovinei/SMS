@@ -115,10 +115,10 @@ function handleError(error) {
 
 *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
 
-var insert = function(message, callback, retry=0){
-    var retry = retry;
+var insert = function(message, callback){
+    var retry = 0;
     // Self execute function
-    (function exec(msg, cb){
+    (function exec(retry){
         var instance = new Message({
             body: message.body,
             from: message.from
@@ -131,18 +131,19 @@ var insert = function(message, callback, retry=0){
         promise.then(function(doc){
             callback(doc._id);
         }).catch(function(error){
-
             // Error saving record
             // Recursive technique try to save record again
             retry++;
             handleError(error);
             if(retry<3){
-                exec(message, callback, retry);
+                exec(retry);
             }else{
                 callback(error);
             }
+
+
         });
-    })();
+    })(message, callback, retry);
 };
 
 
