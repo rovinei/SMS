@@ -1,0 +1,33 @@
+*, *:before, *:after{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -o-box-sizing: border-box;
+}
+
+.clearfix:before, .clearfix:after{
+    content: " ";
+    display: table;
+}
+
+.clearfix:after{
+    clear: both;
+}
+
+html{
+    background: #f5f5f5;
+    font-size: 16px;
+}
+
+div{
+    position: relative;
+    background: #fff;
+    width: 100%;
+    padding: 30px;
+    max-width: 400px;
+    text-align: center;
+    margin: 0 auto;
+    transform: translateX(-200px);
+}

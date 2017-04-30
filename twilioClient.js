@@ -1,18 +1,34 @@
 var config = require('./config');
 var client = require('twilio')(config.accountSid, config.authToken);
 
-module.exports.sendSms = function(to, message) {
-  client.messages.create({
+
+
+
+/*  *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *
+
+    *************************************************************
+    ***                                                       ***
+    *** Twilio send SMS API function                          ***
+    *** Accept arguments                                      ***
+    *** @param to => receiver mobile number                   ***
+    *** @param message => message content                     ***
+    *** @param callback => callback function(boolean)         ***
+    ***                                                       ***
+    *************************************************************
+
+*   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
+
+module.exports.sendSms = function(to, message, callback) {
+client.messages.create({
     body: message,
     to: to,
     from: config.sendingNumber
 //  mediaUrl: imageUrl
   }, function(err, data) {
     if (err) {
-      console.error('Could not notify administrator');
-      console.error(err);
+      callback(false);
     } else {
-      console.log('Administrator notified');
+      callback(true);
     }
   });
 };
