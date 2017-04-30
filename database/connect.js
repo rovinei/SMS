@@ -16,6 +16,6 @@ var config = require('../config');
 *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
 
 exports.getConnection = function(databaseName){
-    var connection = mongoose.createConnection("mongodb://127.0.0.1/"+databaseName);
+    var connection = mongoose.createConnection(process.env.MONGODB_URI);
     return connection;
 }
