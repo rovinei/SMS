@@ -23,6 +23,8 @@ function Scheduler(msgid, delay){
     var self = this;
     self.msgid = msgid;
     self.date = new Date(Date.now()+delay);
+    console.log("DATE TIME : "+self.date);
+    console.log("DELAY TIME : "+delay);
     self.task = schedule.scheduleJob(self.date, function(){
         console.log('CRON TASK IS CALLING :' +self.msgid);
         self.checkEmergencySmsRecord();
