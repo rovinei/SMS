@@ -23,7 +23,7 @@ function Scheduler(msgid, delay){
     var self = this;
     self.msgid = msgid;
     self.date = new Date(Date.now()+delay);
-    var job = schedule.scheduleJob(self.date, function(){
+    self.task = schedule.scheduleJob(self.date, function(){
         console.log('CRON TASK IS CALLING :' +self.msgid);
         self.checkEmergencySmsRecord();
     });
@@ -72,8 +72,11 @@ Scheduler.prototype.checkEmergencySmsRecord = function(){
             var status_notify = notifyAdmin.send();
 
             // Schedule task to check after 5 minute
-            Scheduler(self.msgid, config.scheduleTaskDelay);
+            self.task.cancel();
+            var job = new Scheduler(self.msgid, config.scheduleTaskDelay);
             console.log("CRON JOB EXECUTED :"+self.msgid);
+        }else{
+            self.task.cancel();
         }
     });
 }

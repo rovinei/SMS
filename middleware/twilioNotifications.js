@@ -152,7 +152,7 @@ twilioNotifications.prototype.forwardMessage = function() {
                 //# Create schedule task to check message by _id
                 //# and determine whether staffs had notified or aware
                 //# about emergency text SMS, base on notifyStatus field
-                new Scheduler(msgid, config.scheduleTaskDelay);
+                var job = new Scheduler(msgid, config.scheduleTaskDelay);
                 self.feedBack.record = msgid;
                 resolve(self.feedBack);
             });
