@@ -1,6 +1,7 @@
 var schedule = require('node-schedule');
 var Message = require('../model/message');
 var notifySms = require('./notifySms');
+var config = require('../config');
 
 
 
@@ -71,7 +72,7 @@ Scheduler.prototype.checkEmergencySmsRecord = function(){
             var status_notify = notifyAdmin.send();
 
             // Schedule task to check after 5 minute
-            new Scheduler(self.msgid, 30000);
+            new Scheduler(self.msgid, config.scheduleTaskDelay);
             console.log("CRON JOB EXECUTED :"+self.msgid);
         }
     });

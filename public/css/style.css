@@ -21,13 +21,51 @@ html{
     font-size: 16px;
 }
 
-div{
+.container{
     position: relative;
-    background: #fff;
+    background: transparent;
     width: 100%;
-    padding: 30px;
-    max-width: 400px;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
     margin: 0 auto;
-    transform: translateX(-200px);
+    box-shadow: 1px 3px 5px rgba(0,0,0,0.2);
+}
+
+.panel{
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    background: #fff;
+}
+
+.panel-header{
+    width: 100%;
+    padding: 20px;
+    background: #D499B9;
+    border-bottom: 1px solid #c4c3c1;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.panel-body{
+    width: 100%;
+    padding: 40px 20px;
+    background: transparent;
+}
+
+.panel-header h1{
+    font-family: 'Dosis', sans-serif;
+    font-weight: 700;
+    color: #f1f1f1;
+}
+
+.panel-body p{
+    font-family: 'Dosis', sans-serif;
+    line-height: 1.5;
+    font-size: 30px;
+    font-weight: 400;
+    color: #333;
+    text-align: center;
 }

@@ -12,6 +12,7 @@ var admins = require('../config/administrators.json');
 var messages = require('../model/message');
 var notifySms = require('./notifySms');
 var Scheduler = require('../middleware/cronjob');
+var config = require('../config');
 
 
 
@@ -151,7 +152,7 @@ twilioNotifications.prototype.forwardMessage = function() {
                 //# Create schedule task to check message by _id
                 //# and determine whether staffs had notified or aware
                 //# about emergency text SMS, base on notifyStatus field
-                new Scheduler(msgid, 30000);
+                new Scheduler(msgid, config.scheduleTaskDelay);
                 self.feedBack.record = msgid;
 
                 resolve(self.feedBack);
