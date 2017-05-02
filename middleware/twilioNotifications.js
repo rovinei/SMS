@@ -47,7 +47,7 @@ twilioNotifications.prototype.start = function(){
     var self = this;
     // Start sending SMS after instantiate an object
     return new Promise(function(resolve, reject){
-        self.handleUserMultipleRequest({from:self.from}, function(){
+        self.handleUserMultipleRequest({from:self.from, notifyStatus:false}, function(){
         var result = self.forwardMessage();
             result.then(function(feedback){
                 resolve(feedback);
