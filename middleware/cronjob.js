@@ -24,8 +24,8 @@ function Scheduler(msgid, delay){
     self.msgid = msgid;
     self.date = new Date(Date.now()+delay);
     var job = schedule.scheduleJob(self.date, function(){
-        self.checkEmergencySmsRecord();
         console.log('CRON TASK IS CALLING :' +self.msgid);
+        self.checkEmergencySmsRecord();
     });
 }
 
@@ -62,7 +62,7 @@ Scheduler.prototype.checkEmergencySmsRecord = function(){
             var messageToSend = {
                 sender: message.from,
                 body: message.body,
-                notifyurl: 'https://dc0dab94.ngrok.io/notified?msgid='+message._id,
+                notifyurl: 'https://emergencysms.herokuapp.com/notified?msgid='+message._id,
                 mapurl: 'https://google.com/map',
                 layer: layer.toString()
             };

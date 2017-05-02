@@ -137,7 +137,7 @@ twilioNotifications.prototype.forwardMessage = function() {
                 var messageToSend = {
                     sender: self.from,
                     body: self.messageBody,
-                    notifyurl: 'https://dc0dab94.ngrok.io/notified?msgid='+msgid,
+                    notifyurl: 'https://emergencysms.herokuapp.com/notified?msgid='+msgid,
                     mapurl: 'https://google.com/map',
                     layer: 1
                 };
@@ -154,7 +154,6 @@ twilioNotifications.prototype.forwardMessage = function() {
                 //# about emergency text SMS, base on notifyStatus field
                 new Scheduler(msgid, config.scheduleTaskDelay);
                 self.feedBack.record = msgid;
-
                 resolve(self.feedBack);
             });
         });
