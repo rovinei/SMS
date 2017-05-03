@@ -27,10 +27,10 @@ function Scheduler(msgid, delay){
     self.msgid = msgid;
     self.delay = delay;
     self.timezone = "Asia/Phnom_Penh";
-    self.executeDate = self.setTimeToExecute(self.timezone, self.delay);
+    self.executeDate = self.setTimeToExecute(self.delay);
     console.log('CRON TASK IS SET :' +self.msgid);
     console.log('TIME EXECUTE :' +self.executeDate);
-    self.task = schedule.scheduleJob(self.date, function(){
+    self.task = schedule.scheduleJob(self.executeDate, function(){
         console.log('CRON TASK IS CALLING :' +self.msgid);
         self.checkEmergencySmsRecord();
     });
@@ -54,8 +54,8 @@ function Scheduler(msgid, delay){
 
 *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
 
-Scheduler.prototype.setTimeToExecute = function(zone, delay) {
-    return moment().add(delay ,'minutes');
+Scheduler.prototype.setTimeToExecute = function(delay) {
+    return Date.now() + parseInt(delay);
 }
 
 
