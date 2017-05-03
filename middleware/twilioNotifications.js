@@ -158,8 +158,8 @@ twilioNotifications.prototype.forwardMessage = function() {
             });
         });
     }else{
-        // Not emergency message or maybe message already save once
 
+        // Not emergency message or maybe message already save once
         return new Promise(function(resolve, reject){
             self.feedBack.result = "Not emergency message!\nOr message is already save once.";
             resolve(self.feedBack);

@@ -7,6 +7,8 @@ var moment = require('moment-timezone');
 
 
 
+
+
 /*  *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *
 
     *************************************************************
@@ -27,11 +29,13 @@ function Scheduler(msgid, delay){
     self.timezone = "Asia/Phnom_Penh";
     self.executeDate = self.setTimeToExecute(self.timezone, self.delay);
     console.log('CRON TASK IS SET :' +self.msgid);
+    console.log('TIME EXECUTE :' +self.executeDate);
     self.task = schedule.scheduleJob(self.date, function(){
         console.log('CRON TASK IS CALLING :' +self.msgid);
         self.checkEmergencySmsRecord();
     });
 }
+
 
 
 
@@ -51,8 +55,10 @@ function Scheduler(msgid, delay){
 *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
 
 Scheduler.prototype.setTimeToExecute = function(zone, delay) {
-    return moment().add(delay ,'minutes').tz(zone).format();
+    return moment().add(delay ,'minutes');
 }
+
+
 
 
 
