@@ -28,6 +28,7 @@ function Scheduler(msgid, delay){
     self.delay = delay;
     self.timezone = "Asia/Phnom_Penh";
     self.executeDate = self.setTimeToExecute(self.delay);
+    console.log('TIME DELAY :' +self.delay);
     console.log('CRON TASK IS SET :' +self.msgid);
     console.log('TIME EXECUTE :' +self.executeDate);
     self.task = schedule.scheduleJob(self.executeDate, function(){
