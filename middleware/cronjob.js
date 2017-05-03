@@ -2,6 +2,7 @@ var schedule = require('node-schedule');
 var Message = require('../model/message');
 var notifySms = require('./notifySms');
 var config = require('../config');
+var moment = require('moment-timezone');
 
 
 
@@ -22,13 +23,34 @@ var config = require('../config');
 function Scheduler(msgid, delay){
     var self = this;
     self.msgid = msgid;
-    self.date = new Date(Date.now()+delay);
-    console.log("DATE TIME : "+self.date);
-    console.log("DELAY TIME : "+delay);
+    self.timezone = "Asia/Phnom_Penh";
+    self.executeDate = self.toTimeZone(self.timezone);
+    console.log('CRON TASK IS SET :' +self.msgid);
     self.task = schedule.scheduleJob(self.date, function(){
         console.log('CRON TASK IS CALLING :' +self.msgid);
         self.checkEmergencySmsRecord();
     });
+}
+
+
+
+
+
+/*  *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *
+
+    *************************************************************
+    ***                                                       ***
+    *** Function toTimeZone()                                 ***
+    *** Convert datetime now of a server specific location    ***
+    *** to Cambodia Phnom Penh datetime                       ***
+    *** @Return datetime now in Asia/Phnom_Penh               ***
+    ***                                                       ***
+    *************************************************************
+
+*   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
+
+Scheduler.prototype.toTimeZone = function(zone) {
+    return moment().add(5,'minutes').tz(zone).format();
 }
 
 
