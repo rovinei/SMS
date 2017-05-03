@@ -24,7 +24,7 @@ function Scheduler(msgid, delay){
     var self = this;
     self.msgid = msgid;
     self.timezone = "Asia/Phnom_Penh";
-    self.executeDate = self.toTimeZone(self.timezone);
+    self.executeDate = self.setTimeZone(self.timezone);
     console.log('CRON TASK IS SET :' +self.msgid);
     self.task = schedule.scheduleJob(self.date, function(){
         console.log('CRON TASK IS CALLING :' +self.msgid);
@@ -49,7 +49,7 @@ function Scheduler(msgid, delay){
 
 *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
 
-Scheduler.prototype.toTimeZone = function(zone) {
+Scheduler.prototype.setTimeZone = function(zone) {
     return moment().add(5,'minutes').tz(zone).format();
 }
 
