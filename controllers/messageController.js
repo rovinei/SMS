@@ -1,7 +1,7 @@
 var Message = require('../model/message');
-var twilioNotifications = require('../middleware/twilioNotifications');
-
-
+var EmergencyAlert = require('../middleware/emergencyAlert');
+var SendSms = require('../sendSms');
+var Config = require('../config');
 /*  *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *
 
     *************************************************************
@@ -19,7 +19,7 @@ var twilioNotifications = require('../middleware/twilioNotifications');
 *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
 
 var emergency_request = function(request, response, next){
-    var notification = new twilioNotifications(request, response);
+    var notification = new EmergencyAlert(request, response);
     var promise = notification.start();
     promise.then(function(feedback){
         response.status(200);
@@ -94,15 +94,72 @@ var get_messages = function(request, response, next){
 *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
 
 var response_to_msg = function(request, response, next){
-    Message.update({_id:request.query.msgid},{notifyStatus:true},function(err, status){
+    if(request.query.msgid && request.query.msgid != ''){
+        Message.update({_id:request.query.msgid},{notifyStatus:true},function(err, status){
+            response.status(200);
+            if(err){
+                response.json({
+                    error: "Cannot update message!nMessage not found!"
+                });
+            }else{
+                response.json({
+                    updated: status
+                });
+            }
+        });
+    }else{
         response.status(200);
         response.json({
-            updated : status,
-            error: err
+            updated : false,
+            error: "no message found!"
         });
-    });
+    }
 }
 
+
+
+
+/*  *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *
+
+    *************************************************************
+    ***                                                       ***
+    *** @GET request                                          ***
+
+    *** @Return json(deleted record count)                    ***
+    ***                                                       ***
+    *************************************************************
+
+*   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
+
+var rescued_confirmation = function(request, response, next){
+    if(request.query.msgid && request.query.msgid != ''){
+        Message.update({_id:request.query.msgid,notifyStatus:true},{completed:true},function(err, status){
+            response.status(200);
+            if(err){
+                response.json({
+                    error: "Cannot update message!nMessage not found!"
+                });
+            }else{
+
+                // Send confrimation to Mr.Somphea
+                if(status != null){
+                    SendSms(Config.RESCUED_CONFIRM_INCHARGE, "Rescued Confirm", function(){
+
+                    });
+                }
+                response.json({
+                    updated: status
+                });
+            }
+        });
+    }else{
+        response.status(200);
+        response.json({
+            updated : false,
+            error: "no message found!"
+        });
+    }
+}
 
 
 
@@ -143,4 +200,5 @@ module.exports = {
     response_to_msg : response_to_msg,
     emergency_request: emergency_request,
     remove_messages : remove_messages,
+    rescued_confirmation: rescued_confirmation,
 }

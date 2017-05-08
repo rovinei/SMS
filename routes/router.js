@@ -19,12 +19,14 @@ module.exports = function(router) {
     response.sendFile(path.join(__dirname, 'public', 'index.html'));
   });
 
-  router.get('/incomemsg', messageController.emergency_request);
+  router.get('/emergency_request', messageController.emergency_request);
 
-  router.get('/getmessages', messageController.get_messages);
+  router.get('/get_messages', messageController.get_messages);
 
-  router.get('/notified', messageController.response_to_msg);
+  router.get('/notified_confirm', messageController.response_to_msg);
 
-  router.get('/removemessages', messageController.remove_messages);
+  router.get('/remove_messages', messageController.remove_messages);
+
+  router.get('/rescued_confirm', messageController.rescued_confirmation);
 
 };

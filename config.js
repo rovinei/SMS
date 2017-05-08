@@ -24,7 +24,8 @@ cfg.accountSid = process.env.TWILIO_ACCOUNT_SID;
 cfg.authToken = process.env.TWILIO_AUTH_TOKEN;
 cfg.sendingNumber = process.env.TWILIO_NUMBER;
 
-cfg.scheduleTaskDelay = process.env.SCHEDULE_TASK_DELAY || 5;
+cfg.scheduleTaskDelay = process.env.SCHEDULE_TASK_DELAY || 300000;
+cfg.RESCUED_CONFIRM_INCHARGE = process.env.RESCUED_CONFIRM_INCHARGE || none
 var requiredConfig = [cfg.accountSid, cfg.authToken, cfg.sendingNumber];
 var isConfigured = requiredConfig.every(function(configValue) {
   return configValue || false;

@@ -1,5 +1,5 @@
 var admins = require('../config/administrators.json');
-var twilioClient = require('../twilioClient');
+var sendSms = require('../sendSms');
 
 
 
@@ -17,7 +17,7 @@ var twilioClient = require('../twilioClient');
 
 *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
 
-function notifySms(people, messageToSend){
+function NotifyAdmin(people, messageToSend){
     var self = this;
     self.messageToSend = self.formatMessage(messageToSend);
     self.sendTo = [];
@@ -63,14 +63,14 @@ function notifySms(people, messageToSend){
     *************************************************************
 
 *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
-notifySms.prototype.formatMessage = function(message) {
+NotifyAdmin.prototype.formatMessage = function(message) {
   return '\n\rNeed Emergency Help\n\r'+
         '\n\rSender :'+message.sender+
-        '\n\rClick link below [Notify URL] to note that you have receive sms ==>'+
-        '\n\rNotify URL :'+message.notifyurl+
-        '\n\rMap URL :'+message.mapurl+
         '\n\rMessage :'+message.body+
-        '\n\rLayer :'+message.layer;
+        '\n\rClick link below [Notify URL] to note that you have receive sms ==>'+
+        '\n\rNotify Link : '+message.notify_url+
+        '\n\rClick link below only after you have rescued victim'+
+        '\n\rRescued Confirmed Link : '+message.rescued_url;
 };
 
 
@@ -88,26 +88,32 @@ notifySms.prototype.formatMessage = function(message) {
     *************************************************************
 
 *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
-notifySms.prototype.send = function(){
+NotifyAdmin.prototype.send = function(){
 
     var self = this;
     self.feedback = {
         sendSuccess: 0,
         sendFailed: 0
     };
+
     return new Promise(function(resolve, reject){
+        var index = 0;
         self.sendTo.forEach(function(phoneNumber) {
-            twilioClient.sendSms(phoneNumber, self.messageToSend, function(status){
-                if(status){
+            index++;
+            sendSms(phoneNumber, self.messageToSend, function(status){
+                if(status==true){
                     self.feedback.sendSuccess++;
                 }else{
                     self.feedback.sendFailed++;
-                }
+                };
+
+                if(index===self.sendTo.length){resolve(self.feedback);};
             });
+
         });
 
-        resolve(self.feedback);
     });
+
 };
 
-module.exports = notifySms;
+module.exports = NotifyAdmin;

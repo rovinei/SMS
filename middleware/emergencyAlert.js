@@ -6,13 +6,12 @@
 
 *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
 
-var twilioClient = require('../twilioClient');
-var fs = require('fs');
-var admins = require('../config/administrators.json');
-var messages = require('../model/message');
-var notifySms = require('./notifySms');
+var Fs = require('fs');
+var Admins = require('../config/administrators.json');
+var Message = require('../model/message');
+var NotifyAdmin = require('./notifyAdmin');
 var Scheduler = require('../middleware/cronjob');
-var config = require('../config');
+var Config = require('../config');
 
 
 
@@ -22,7 +21,7 @@ var config = require('../config');
 
     *************************************************************
     ***                                                       ***
-    *** Class twilioNotification                              ***
+    *** Class EmergencyAlert                                  ***
     *** Accept Contrutor Argument                             ***
     *** @Request object from controller                       ***
     *** @Response object from controller                      ***
@@ -30,24 +29,22 @@ var config = require('../config');
 
 *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
 
-function twilioNotifications(request, response){
+function EmergencyAlert(request, response){
     var self = this;
     self.request = request;
     self.response = response;
     self.from = request.query.From || "";
     self.messageBody = request.query.Body || "";
-    self.sendFailed = 0;
-    self.sendSuccess = 0;
     self.messageCount = 0;
     self.process = '';
     self.feedBack = {};
 }
 
-twilioNotifications.prototype.start = function(){
+EmergencyAlert.prototype.start = function(){
     var self = this;
     // Start sending SMS after instantiate an object
     return new Promise(function(resolve, reject){
-        self.handleUserMultipleRequest({from:self.from, notifyStatus:false}, function(){
+        self.handleUserMultipleRequest({from:self.from, completed:false}, function(){
         var result = self.forwardMessage();
             result.then(function(feedback){
                 resolve(feedback);
@@ -67,7 +64,7 @@ twilioNotifications.prototype.start = function(){
     *************************************************************
 
 *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
-twilioNotifications.prototype.getFeedBack = function(){
+EmergencyAlert.prototype.getFeedBack = function(){
     var self = this;
     return self.feedBack;
 };
@@ -88,10 +85,10 @@ twilioNotifications.prototype.getFeedBack = function(){
 
 *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
 
-twilioNotifications.prototype.handleUserMultipleRequest = function(query, callback){
+EmergencyAlert.prototype.handleUserMultipleRequest = function(query, callback){
     var self = this;
 
-    messages.count_query(query, function(err, count){
+    Message.count_query(query, function(err, count){
         if(err){
             self.feedBack.handleUserMultipleRequestError = err;
         }else{
@@ -118,7 +115,7 @@ twilioNotifications.prototype.handleUserMultipleRequest = function(query, callba
 
 *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
 
-twilioNotifications.prototype.forwardMessage = function() {
+EmergencyAlert.prototype.forwardMessage = function() {
     var self = this;
     var msgbody = self.messageBody;
 
@@ -133,28 +130,26 @@ twilioNotifications.prototype.forwardMessage = function() {
 
         return new Promise(function(resolve, reject){
             // Insert message record as reference
-            messages.insert(data, function(msgid){
+            Message.insert(data, function(msgid){
                 var messageToSend = {
                     sender: self.from,
                     body: self.messageBody,
-                    notifyurl: 'https://emergencysms.herokuapp.com/notified?msgid='+msgid,
-                    mapurl: 'https://google.com/map',
-                    layer: 1
+                    notify_url: 'https://emergencysms.herokuapp.com/notified_confirm?msgid='+msgid,
+                    rescued_url: 'https://emergencysms.herokuapp.com/rescued_confirm?msgid='+msgid
                 };
 
                 // Send sms to staff in Layer 1
-                var notifyAdmin = new notifySms({layer: 'layer1'}, messageToSend);
-                var promise = notifyAdmin.send();
-                promise.then(function(status_notify){
+                var notify = new NotifyAdmin({layer: 'layer1'}, messageToSend);
+                notify.send().then(function(status_notify){
                     self.feedBack.status = status_notify;
+                    //# Create schedule task to check message by _id
+                    //# and determine whether staffs had notified or aware
+                    //# about emergency text SMS, base on notifyStatus field
+                    var job = new Scheduler(msgid, Config.scheduleTaskDelay);
+                    self.feedBack.record = msgid;
+                    resolve(self.feedBack);
                 });
 
-                //# Create schedule task to check message by _id
-                //# and determine whether staffs had notified or aware
-                //# about emergency text SMS, base on notifyStatus field
-                var job = new Scheduler(msgid, config.scheduleTaskDelay);
-                self.feedBack.record = msgid;
-                resolve(self.feedBack);
             });
         });
     }else{
@@ -168,4 +163,4 @@ twilioNotifications.prototype.forwardMessage = function() {
     }
 };
 
-module.exports = twilioNotifications;
+module.exports = EmergencyAlert;

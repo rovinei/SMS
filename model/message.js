@@ -44,8 +44,8 @@ const MessageSchema = new Schema({
 
 
 // Obtain connection to database
-var connection = Database.getConnection('messages');
-var Message = connection.model('Message', MessageSchema);
+var Connection = Database.getConnection('messages');
+var Message = Connection.model('Message', MessageSchema);
 
 
 

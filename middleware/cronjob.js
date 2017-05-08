@@ -1,9 +1,7 @@
 var schedule = require('node-schedule');
 var Message = require('../model/message');
-var notifySms = require('./notifySms');
-var config = require('../config');
-var moment = require('moment-timezone');
-
+var NotifyAdmin = require('./notifyAdmin');
+var Config = require('../config');
 
 
 
@@ -94,18 +92,17 @@ Scheduler.prototype.checkEmergencySmsRecord = function(){
             var messageToSend = {
                 sender: message.from,
                 body: message.body,
-                notifyurl: 'https://emergencysms.herokuapp.com/notified?msgid='+message._id,
-                mapurl: 'https://google.com/map',
-                layer: layer.toString()
+                notify_url: 'https://emergencysms.herokuapp.com/notified_confirm?msgid='+message._id,
+                rescued_url: 'https://emergencysms.herokuapp.com/rescued_confirm?msgid='+message._id
             };
 
             // Notify to next staff layer
-            var notifyAdmin = new notifySms({layer: 'layer'+layer.toString()}, messageToSend);
+            var notifyAdmin = new NotifyAdmin({layer: 'layer'+layer.toString()}, messageToSend);
             var status_notify = notifyAdmin.send();
 
             // Schedule task to check after 5 minute
             self.task.cancel();
-            var job = new Scheduler(self.msgid, config.scheduleTaskDelay);
+            var job = new Scheduler(self.msgid, Config.scheduleTaskDelay);
             console.log("CRON JOB EXECUTED :"+self.msgid);
         }else{
             self.task.cancel();

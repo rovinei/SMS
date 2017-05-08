@@ -1,5 +1,5 @@
-var config = require('./config');
-var client = require('twilio')(config.accountSid, config.authToken);
+var Config = require('./config');
+var client = require('twilio')(Config.accountSid, Config.authToken);
 
 
 
@@ -18,13 +18,13 @@ var client = require('twilio')(config.accountSid, config.authToken);
 
 *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   */
 
-module.exports.sendSms = function(to, message, callback) {
+module.exports = function(to, message, callback) {
 client.messages.create({
     body: message,
     to: to,
-    from: config.sendingNumber
+    from: Config.sendingNumber
 //  mediaUrl: imageUrl
-  }, function(err, data) {
+  }, function(err) {
     if (err) {
       callback(false);
     } else {
