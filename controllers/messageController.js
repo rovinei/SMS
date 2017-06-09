@@ -166,15 +166,24 @@ var rescued_confirmation = function(request, response, next){
                     SendSms(Config.RESCUED_CONFIRM_INCHARGE, "Rescued Confirm", function(){
 
                     });
-                }
-                response.render('index',
-                    {
-                        feedback: {
-                            code: 200,
-                            message: "Successfully updated rescued comfirmed"
+                    response.render('index',
+                        {
+                            feedback: {
+                                code: 200,
+                                message: JSON.stringify(status)
+                            }
                         }
-                    }
-                );
+                    );
+                }else{
+                    response.render('index',
+                        {
+                            feedback: {
+                                code: 400,
+                                message: "No message was found or rescue operation related to this message not yet been notifed"
+                            }
+                        }
+                    );
+                }
             }
         });
     }else{
