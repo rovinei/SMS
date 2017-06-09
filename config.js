@@ -26,6 +26,8 @@ cfg.sendingNumber = process.env.TWILIO_NUMBER;
 
 cfg.scheduleTaskDelay = process.env.SCHEDULE_TASK_DELAY || 300000;
 cfg.RESCUED_CONFIRM_INCHARGE = process.env.RESCUED_CONFIRM_INCHARGE || none
+cfg.NOTIFY_URL_PARAMS = process.env.NOTIFY_URL_PARAMS || 'http://localhost/'
+cfg.RESCUED_CONFIRM_URL_PARAMS = process.env.RESCUED_CONFIRM_URL_PARAMS || 'http://localhost/'
 var requiredConfig = [cfg.accountSid, cfg.authToken, cfg.sendingNumber];
 var isConfigured = requiredConfig.every(function(configValue) {
   return configValue || false;

@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vkrirom Server Emergency Message</title>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Dosis:400,700" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+
+</head>
+<body>
+<div class="container">
+    <div class="panel">
+        <div class="panel-header">
+            <h1>Vikirirom Emergency System</h1>
+        </div>
+        <div class="panel-body">
+        <% if(message){ %>
+            <p>
+                <%= message.id %>
+            </p>
+        <% } %>
+        </div>
+    </div>
+</div>
+</body>
+</html>

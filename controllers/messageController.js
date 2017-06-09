@@ -23,7 +23,7 @@ var emergency_request = function(request, response, next){
     var promise = notification.start();
     promise.then(function(feedback){
         response.status(200);
-        response.json(feedback);
+        response.render('index', {feedback: feedback});
     });
 
 }
@@ -48,7 +48,7 @@ var get = function(request, response, next){
     var msgid = request.query.msgid || "";
     Message.get_by_id(msgid ,function(message){
         response.status(200);
-        response.json(message);
+        response.render('message', {message: message});
     });
 };
 
@@ -71,7 +71,7 @@ var get = function(request, response, next){
 var get_messages = function(request, response, next){
     Message.get_lists(function(messages){
         response.status(200);
-        response.json(messages);
+        response.render('message_list', {messages: messages})
     });
 }
 
@@ -98,21 +98,35 @@ var response_to_msg = function(request, response, next){
         Message.update({_id:request.query.msgid},{notifyStatus:true},function(err, status){
             response.status(200);
             if(err){
-                response.json({
-                    error: "Cannot update message!nMessage not found!"
-                });
+                response.render('index',
+                    {
+                        feedback: {
+                            code: 500,
+                            message: "Cannot update message!<br> Please try again"
+                        }
+                    }
+                );
             }else{
-                response.json({
-                    updated: status
-                });
+                response.render('index',
+                    {
+                        feedback: {
+                            code: 200,
+                            message: "Successfully notify to message"
+                        }
+                    }
+                );
             }
         });
     }else{
         response.status(200);
-        response.json({
-            updated : false,
-            error: "no message found!"
-        });
+        response.render('index',
+            {
+                feedback: {
+                    code: 400,
+                    message: "No message was found"
+                }
+            }
+        );
     }
 }
 
@@ -136,9 +150,15 @@ var rescued_confirmation = function(request, response, next){
         Message.update({_id:request.query.msgid,notifyStatus:true},{completed:true},function(err, status){
             response.status(200);
             if(err){
-                response.json({
-                    error: "Cannot update message!nMessage not found!"
-                });
+
+                response.render('index',
+                    {
+                        feedback: {
+                            code: 500,
+                            message: "Cannot update message!<br> Please try again!"
+                        }
+                    }
+                );
             }else{
 
                 // Send confrimation to Mr.Somphea
@@ -147,17 +167,26 @@ var rescued_confirmation = function(request, response, next){
 
                     });
                 }
-                response.json({
-                    updated: status
-                });
+                response.render('index',
+                    {
+                        feedback: {
+                            code: 200,
+                            message: "Successfully updated rescued comfirmed"
+                        }
+                    }
+                );
             }
         });
     }else{
         response.status(200);
-        response.json({
-            updated : false,
-            error: "no message found!"
-        });
+        response.render('index',
+            {
+                feedback: {
+                    code: 400,
+                    message: "No message was found"
+                }
+            }
+        );
     }
 }
 
@@ -187,10 +216,14 @@ var remove_messages = function(request, response, next){
     }
     Message.remove(query, function(err, status){
         response.status(200);
-        response.json({
-            updated: status.result,
-            error: err
-        });
+        response.render('index',
+            {
+                feedback: {
+                    code: 200,
+                    message: "Successfully removed all rescued messages record"
+                }
+            }
+        );
     });
 }
 

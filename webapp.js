@@ -14,6 +14,10 @@ var config = require('./config');
 // Create Express web app
 var app = express();
 
+// Set ejs template engine
+app.set('views', path.join(__dirname, 'public'));
+app.set('view engine', 'ejs');
+
 // Use morgan for HTTP request logging in dev and prod
 if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('combined'));
