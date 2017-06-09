@@ -170,7 +170,7 @@ var rescued_confirmation = function(request, response, next){
                         {
                             feedback: {
                                 code: 200,
-                                message: JSON.stringify(status)
+                                message: "Successfully updated operation to rescued has confirmed"
                             }
                         }
                     );
