@@ -23,7 +23,7 @@ var emergency_request = function(request, response, next){
     var promise = notification.start();
     promise.then(function(feedback){
         response.status(200);
-        response.render('index', {feedback: feedback});
+        response.json({feedback: feedback});
     });
 
 }

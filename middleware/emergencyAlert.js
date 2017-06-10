@@ -152,6 +152,7 @@ EmergencyAlert.prototype.forwardMessage = function() {
                             var job = new Scheduler(msgid, Config.scheduleTaskDelay);
 
                             self.feedBack.code = 200;
+                            self.feedBack.send_status = status_notify;
                             self.feedBack.message = "Please stay calm, we will reaching you in just short time";
                             // Vis SMS if was sent via sms
                             if(self.isViaSms !== false){
