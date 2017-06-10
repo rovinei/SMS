@@ -31,7 +31,7 @@ function EmergencyAlert(request, response){
     var self = this;
     self.request = request;
     self.response = response;
-    self.from = "+"+request.query.From || "";
+    self.from = request.query.SmsSid ? "+"+request.query.From || "" : request.query.From || "";
     self.messageBody = request.query.Body || "";
     self.isViaSms = request.query.SmsSid || false;
     self.messageCount = 0;
@@ -118,11 +118,11 @@ EmergencyAlert.prototype.handleUserMultipleRequest = function(query, callback){
 EmergencyAlert.prototype.forwardMessage = function() {
     var self = this;
     var msgbody = self.messageBody;
-
+    var msgbodyLower = msgbody.toLowerCase();
     // Filter message content
     // Start sending only if message content match keyword
     // @keyword emergency and @var self.messageCount <=0
-    if(~msgbody.indexOf('emergency')){
+    if(~msgbodyLower.indexOf('emergency')){
         if(self.messageCount<=0){
             var data = {
                 body: self.messageBody,
