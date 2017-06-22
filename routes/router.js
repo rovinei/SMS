@@ -22,6 +22,7 @@ module.exports = function(router) {
   router.get('/emergency_request', messageController.emergency_request);
 
   router.get('/get_messages', messageController.get_messages);
+  router.get('/get_message', messageController.get);
   router.get('/remove_messages', messageController.remove_messages);
 
   router.get('/notified_confirm', messageController.response_to_msg);

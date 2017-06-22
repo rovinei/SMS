@@ -48,7 +48,7 @@ var get = function(request, response, next){
     var msgid = request.query.msgid || "";
     Message.get_by_id(msgid ,function(message){
         response.status(200);
-        response.render('message', {message: message});
+        response.json({message: message});
     });
 };
 
@@ -95,23 +95,50 @@ var get_messages = function(request, response, next){
 
 var response_to_msg = function(request, response, next){
     if(request.query.msgid && request.query.msgid != ''){
-        Message.update({_id:request.query.msgid},{notifyStatus:true},function(err, status){
-            response.status(200);
-            if(err){
-                response.render('index',
+        Message.get_by_id(request.query.msgid, function(message){
+            if(message){
+                if(message.notifyStatus !== true){
+                    Message.update({_id:request.query.msgid},{notifyStatus:true},function(err, status){
+                        response.status(200);
+                        if(err){
+                            response.render('index',
+                                {
+                                    feedback: {
+                                        code: 500,
+                                        message: "Cannot update message!<br> Please try again"
+                                    }
+                                }
+                            );
+                        }else{
+                            response.render('index',
+                                {
+                                    feedback: {
+                                        code: 200,
+                                        message: "Successfully notify to message"
+                                    }
+                                }
+                            );
+                        }
+                    });
+                }else{
+                    response.status(200);
+                    response.render('index',
+                        {
+                            feedback: {
+                                code: 200,
+                                message: "Someone has already notified the message. Thank you."
+                            }
+                        }
+                    );
+                }
+
+            }else{
+                response.status(200);
+                    response.render('index',
                     {
                         feedback: {
                             code: 500,
-                            message: "Cannot update message!<br> Please try again"
-                        }
-                    }
-                );
-            }else{
-                response.render('index',
-                    {
-                        feedback: {
-                            code: 200,
-                            message: "Successfully notify to message"
+                            message: "Something went wrong, Seems there is message with this id."
                         }
                     }
                 );
@@ -147,45 +174,77 @@ var response_to_msg = function(request, response, next){
 
 var rescued_confirmation = function(request, response, next){
     if(request.query.msgid && request.query.msgid != ''){
-        Message.update({_id:request.query.msgid,notifyStatus:true},{completed:true},function(err, status){
-            response.status(200);
-            if(err){
+        Message.get_by_id(request.query.msgid, function(message){
 
-                response.render('index',
-                    {
-                        feedback: {
-                            code: 500,
-                            message: "Cannot update message!<br> Please try again!"
+            if(message){
+                if(message.completed !== true){
+                    Message.update({_id:request.query.msgid,notifyStatus:true},{completed:true},function(err, status){
+                        response.status(200);
+                        if(err){
+
+                            response.render('index',
+                                {
+                                    feedback: {
+                                        code: 500,
+                                        message: "Cannot update message!<br> Please try again!"
+                                    }
+                                }
+                            );
+                        }else{
+
+                            // Send confrimation to Mr.Somphea
+                            if(status != null){
+                                SendSms(Config.RESCUED_CONFIRM_INCHARGE, "Rescued Confirm", function(){
+
+                                });
+                                response.render('index',
+                                    {
+                                        feedback: {
+                                            code: 200,
+                                            message: "Successfully updated operation to rescued has confirmed"
+                                        }
+                                    }
+                                );
+                            }else{
+                                response.render('index',
+                                    {
+                                        feedback: {
+                                            code: 400,
+                                            message: "No message was found or rescue operation related to this message not yet been notifed"
+                                        }
+                                    }
+                                );
+                            }
                         }
-                    }
-                );
-            }else{
-
-                // Send confrimation to Mr.Somphea
-                if(status != null){
-                    SendSms(Config.RESCUED_CONFIRM_INCHARGE, "Rescued Confirm", function(){
-
                     });
+                }else{
+                    response.status(200);
                     response.render('index',
                         {
                             feedback: {
                                 code: 200,
-                                message: "Successfully updated operation to rescued has confirmed"
-                            }
-                        }
-                    );
-                }else{
-                    response.render('index',
-                        {
-                            feedback: {
-                                code: 400,
-                                message: "No message was found or rescue operation related to this message not yet been notifed"
+                                message: "Someone has confirmed this rescue already, Thank you."
                             }
                         }
                     );
                 }
+
+            }else{
+                response.status(200);
+                response.render('index',
+                    {
+                        feedback: {
+                            code: 500,
+                            message: "Something went wrong, Seems there is no message with id"
+                        }
+                    }
+                );
             }
+
+
+
         });
+
     }else{
         response.status(200);
         response.render('index',

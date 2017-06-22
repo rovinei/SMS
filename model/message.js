@@ -195,7 +195,7 @@ var get_by_id = function(msgid, callback){
         Message.findById(msgid, function(err, message){
             if(err){
                 handleError(err);
-                exec(msgid, callback);
+                callback(err);
             }
             callback(message);
         });
