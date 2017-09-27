@@ -1,4 +1,4 @@
-
+var path = require('path');
 var messageController = require('../controllers/messageController');
 /*  *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *
 
