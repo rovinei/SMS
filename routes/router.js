@@ -16,7 +16,7 @@ module.exports = function(router) {
 
   router.get('/', function(request, response, next){
     response.status(200);
-    response.sendFile(path.join(__dirname, 'public', 'index.html'));
+    response.render('index', {} );
   });
 
   router.get('/emergency_request', messageController.emergency_request);
