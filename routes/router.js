@@ -14,7 +14,7 @@ var messageController = require('../controllers/messageController');
 
 module.exports = function(router) {
 
-  router.get('/', function(){
+  router.get('/', function(request, response, next){
     response.status(200);
     response.sendFile(path.join(__dirname, 'public', 'index.html'));
   });
