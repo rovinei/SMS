@@ -84,26 +84,35 @@ Scheduler.prototype.checkEmergencySmsRecord = function(){
 
         // Check notifyStatus field
         if(message && message.notifyStatus == false){
-            var layer = parseInt(message.reachLayer) == 3 ? '1' : parseInt(message.reachLayer)+1;
-            Message.update({_id:message._id},{reachLayer:layer.toString()}, function(err, record){
-            });
+            var layer = parseInt(message.reachLayer);
 
-            // Create same message content format
-            var messageToSend = {
-                sender: message.from,
-                body: message.body,
-                notify_url: 'https://emergencysms.herokuapp.com/notified_confirm?msgid='+message._id,
-                rescued_url: 'https://emergencysms.herokuapp.com/rescued_confirm?msgid='+message._id
-            };
+            if(layer != 3){
+                var nextLayer = parseInt(message.reachLayer)+1;
+                Message.update({_id:message._id},{reachLayer:nextLayer.toString()}, function(err, record){});
 
-            // Notify to next staff layer
-            var notifyAdmin = new NotifyAdmin({layer: 'layer'+layer.toString()}, messageToSend);
-            var status_notify = notifyAdmin.send();
+                // Create same message content format
+                var messageToSend = {
+                    sender: message.from,
+                    body: message.body,
+                    notify_url: 'https://emergencysms.herokuapp.com/notified_confirm?msgid='+message._id,
+                    rescued_url: 'https://emergencysms.herokuapp.com/rescued_confirm?msgid='+message._id
+                };
 
-            // Schedule task to check after 5 minute
-            self.task.cancel();
-            var job = new Scheduler(self.msgid, Config.scheduleTaskDelay);
-            console.log("CRON JOB EXECUTED :"+self.msgid);
+                // Notify to next staff layer
+                var notifyAdmin = new NotifyAdmin({layer: 'layer'+nextLayer.toString()}, messageToSend);
+                var status_notify = notifyAdmin.send();
+
+                if(nextLayer != 3){
+                    // Schedule task to check after 5 minute
+                    self.task.cancel();
+                    var job = new Scheduler(self.msgid, Config.scheduleTaskDelay);
+                    console.log("CRON JOB EXECUTED :"+self.msgid);
+                }
+
+            }else{
+                self.task.cancel();
+            }
+
         }else{
             self.task.cancel();
         }
